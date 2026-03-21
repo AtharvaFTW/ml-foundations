@@ -42,7 +42,7 @@ Implemented MSE, Binary Cross-Entropy, and Categorical Cross-Entropy in NumPy wi
 
 **Files:** `loss_function.py`
 
-## Day 4 - Value Class from Scratch
+## Day 4 - Value Class from Scratch (Andrej Karpathy)
 
 Implemented __add__, __mul__, backward() and tanh() from ground up.
 

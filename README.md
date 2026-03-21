@@ -23,8 +23,8 @@ Computed numerical gradient of f(x)=x² and f(x,y)=x²+y² using the definition 
 Verified chain rule by hand.
 
 **Key concepts:**
-- A derivative is just the slope at a point
-- Gradients are how neural networks know which direction to update
+- A derivative is just the slope at a point.
+- Gradients are how neural networks know which direction to update.
 
 **Files:** `gradient.py`
 
@@ -35,9 +35,22 @@ Verified chain rule by hand.
 Implemented MSE, Binary Cross-Entropy, and Categorical Cross-Entropy in NumPy without any ML libraries.
 
 **Key Concepts**
-- Cross entropy derived from information theory
-- Loss is just -log(probability assigned to correct class)
-- BCE punishes confident wrong answers far harder than MSE
-- Numerical stability via np.clip to prevent log(0)
+- Cross entropy derived from information theory.
+- Loss is just -log(probability assigned to correct class).
+- BCE punishes confident wrong answers far harder than MSE.
+- Numerical stability via np.clip to prevent log(0).
 
 **Files:** `loss_function.py`
+
+## Day 4 - Value Class from Scratch
+
+Implemented __add__, __mul__, backward() and tanh() from ground up.
+
+**Key Concepts**
+- Autograd tracks every operation in a computation graph so gradients can flow backwards automatically
+- The chain rule is how gradients move through the graph - each operation multiplies the incoming gradient by its local derivative
+- Topological sort ensures gradients are computed in the right order - output before inputs
+- Leaf nodes (like `a` and `b`) accumulate gradients via `+=` because they can be used in multiple operations
+- tanh saturates for large inputs - gradient approaches 0, which is why weight initialization matters
+
+**Files:** `micrograd.py`

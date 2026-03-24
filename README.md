@@ -57,7 +57,7 @@ Implemented __add__, __mul__, backward() and tanh() from ground up.
 
 ## Day 5 - Built 2-Layer neural network in pure NumPy.
 
-Implemented init_params, sigmoid, forward, compute_loss, backward, update_params, training functions
+Implemented init_params, sigmoid, forward, compute_loss, backward, update_params, training functions.
 
 **Key Concepts**
 - `init_params` - Initializes random weights. 
@@ -65,7 +65,7 @@ Implemented init_params, sigmoid, forward, compute_loss, backward, update_params
 - `forward` - The forward functionality of the network.
 - `compute_loss` - Loss computation
 - `backward` - Backpropagation.
-- `update_params` - This updates the current weights to minimize loss.
+- `update_params` - Optimizer that updates the current weights to minimize loss.
 - `train` - The function that encapsulates everything we built so far and trains the neural network.
 
 XOR Results table -
@@ -84,3 +84,22 @@ Loss curve image -
 ![XOR Training Loss](images/XOR_Training_Loss.png)
 
 **Files:** `neural_net.py`
+
+## Day 6 - Optimizers from scratch.
+
+Implemented three optimizers and compared their convergence on XOR.
+
+**Key Concepts**
+- SGD: The simplest update: `w = w - lr * g`. Works but oscillates in ravines and can be slow through flat regions.
+- Momentum: Adds a velocity term that accumulates past gradients, smoothing out noise and accelerating through consistent gradient directions, like a ball rolling downhill.
+- Adam: Combines momentum (first moment) with RMSProp (second moment) to give each parameter its own adaptive learning rate. Bias correction fixes the zero-initialization bias in early steps.
+    - Adam needs a lower `lr=0.01` vs `0.1` for SGD/Momentum because its adaptive scaling already amplifies small gradients.
+
+**Key Insight:** Adam adapts learning rate per weight using momentum + velocity. On XOR it converges fastest.
+
+Loss curves show the tradeoff: SGD is most erratic, Momentum is smoother and Adam is fastest and most stable.
+
+![Optimizer convergence on XOR](images/optimizer_comparison.png)
+
+**Files:** `neural_net.py`
+ 

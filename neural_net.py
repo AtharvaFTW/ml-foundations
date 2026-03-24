@@ -49,7 +49,7 @@ def backward(x, y, a1, a2, W1, b1, W2):
 
     return dW1, db1, dW2, db2
 
-def update_params(W1, b1, W2, b2, dW1, db1, dW2, db2, lr):
+def sgd(W1, b1, W2, b2, dW1, db1, dW2, db2, lr):
     """
     Gradient descent update
     """
@@ -60,17 +60,78 @@ def update_params(W1, b1, W2, b2, dW1, db1, dW2, db2, lr):
 
     return W1, b1, W2, b2
 
-def train():
+def momentum_update(W1, b1, W2, b2, dW1, db1, dW2, db2, lr,v, beta =0.9):
+    #update velocity for each parameter
+    v["W1"] = beta * v["W1"] + (1-beta) *dW1
+    v["b1"] = beta * v["b1"] + (1-beta) *db1
+    v["W2"] = beta * v["W2"] + (1-beta) *dW2
+    v["b2"] = beta * v["b2"] + (1-beta) *db2
+
+    W1 = W1 - lr * v['W1']
+    b1 = b1 - lr * v['b1']
+    W2 = W2 - lr * v['W2']
+    b2 = b2 - lr * v['b2']
+
+    return W1, b1, W2, b2, v
+
+def adam_update(W1, b1, W2, b2, dW1, db1, dW2, db2, lr, m, v, t, beta1=0.9, beta2=0.999 , eps= 1e-8):
+    #update m (momentum)
+    m["W1"] = beta1 * m["W1"] + (1-beta1) * dW1
+    m["b1"] = beta1 * m["b1"] + (1-beta1) * db1
+    m["W2"] = beta1 * m["W2"] + (1-beta1) * dW2
+    m["b2"] = beta1 * m["b2"] + (1-beta1) * db2
+
+    #update v (velocity)
+    v["W1"] = beta2 * v["W1"] + (1-beta2) * dW1**2
+    v["b1"] = beta2 * v["b1"] + (1-beta2) * db1**2
+    v["W2"] = beta2 * v["W2"] + (1-beta2) * dW2**2
+    v["b2"] = beta2 * v["b2"] + (1-beta2) * db2**2
+
+    #bias correction
+    m_corrected_W1 = m["W1"] / (1-beta1**t)
+    m_corrected_b1 = m["b1"] / (1-beta1**t)
+    m_corrected_W2 = m["W2"] / (1-beta1**t)
+    m_corrected_b2 = m["b2"] / (1-beta1**t)
+
+    v_corrected_W1 = v["W1"] / (1-beta2**t)
+    v_corrected_b1 = v["b1"] / (1-beta2**t)
+    v_corrected_W2 = v["W2"] / (1-beta2**t)
+    v_corrected_b2 = v["b2"] / (1-beta2**t)
+
+    #update weights
+
+    W1 = W1 - lr * m_corrected_W1 / (np.sqrt(v_corrected_W1) + eps)
+    b1 = b1 - lr * m_corrected_b1 / (np.sqrt(v_corrected_b1) + eps)
+    W2 = W2 - lr * m_corrected_W2 / (np.sqrt(v_corrected_W2) + eps)
+    b2 = b2 - lr * m_corrected_b2 / (np.sqrt(v_corrected_b2) + eps)
+
+    return W1, b1, W2, b2, m, v
+
+def train(optimizer):
     # Training Data
     X = np.array([[0,0],[0,1],[1,0],[1,1]])
     Y = np.array([[0],[1],[1],[0]])
 
     #Hyperparameters 
-    epochs = 120
-    lr = 1.0
+    epochs = 300
     losses = []
+    if optimizer == "sgd":
+        lr = 0.1
+    elif optimizer == "momentum":
+        lr = 0.1
+    elif optimizer == "adam":
+        lr = 0.01
+    
     W1, b1, W2, b2 = init_params()
 
+    v = {"W1": np.zeros_like(W1) , "b1":np.zeros_like(b1),
+         "W2": np.zeros_like(W2) , "b2":np.zeros_like(b2)}
+    
+    m = {"W1": np.zeros_like(W1) , "b1":np.zeros_like(b1),
+         "W2": np.zeros_like(W2) , "b2":np.zeros_like(b2)}
+    t = 0
+    
+    print(f"Training for {optimizer}")
     for epoch in range(epochs):
         total_loss = 0
         for i in range(len(X)):
@@ -80,21 +141,30 @@ def train():
             loss = compute_loss(act2, y)
             total_loss += loss
             dW1, db1, dW2, db2 = backward(x,y,act1,act2,W1,b1,W2)
-            W1, b1, W2, b2 = update_params(W1,b1,W2,b2,dW1,db1,dW2,db2,lr)
+            if optimizer == "sgd":
+                W1, b1, W2, b2 = sgd(W1,b1,W2,b2,dW1,db1,dW2,db2,lr)
+            elif optimizer == "momentum":
+                W1, b1, W2, b2, v = momentum_update(W1,b1,W2,b2,dW1,db1,dW2,db2,lr,v)
+            elif optimizer == "adam":
+                t+=1
+                W1, b1, W2, b2, m, v = adam_update(W1,b1,W2,b2,dW1,db1,dW2,db2,lr,m,v,t)
         losses.append(total_loss/4)
     
-        if epoch%20 == 0:
+        if epoch%50 == 0:
             print(f"Epoch {epoch}, Loss:{total_loss/4:.4f}")
-        
-    plt.plot(losses)
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.title("XOR Training Loss")
-    plt.savefig("xor_loss_curve.png")
-    print("Loss curve saved.")
-
-
+    
+    print("\n")
+    return losses
 
 if __name__ =="__main__":
     print("\n")
-    train()
+    for opt in ["sgd", "momentum" , "adam"]:
+        losses = train(opt)
+        plt.plot(losses, label = opt)
+    
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.title("XOR Training Loss - Optimizer Comparision")
+    plt.legend()
+    plt.savefig("images/optimizer_comparison.png")
+    print("Saved optimizer_comparison.png")

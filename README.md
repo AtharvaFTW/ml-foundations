@@ -60,13 +60,13 @@ Implemented __add__, __mul__, backward() and tanh() from ground up.
 Implemented init_params, sigmoid, forward, compute_loss, backward, update_params, training functions
 
 **Key Concepts**
-`init_params` - Initialized random weights 
-`sigmoid` - A function for sigmoid activation
-`forward` - The forward functionality of the network
-`compute_loss` - Computes the loss
-`backward` - Backpropagation
-`update_params` - This updates the current weights to minimize loss
-`train` - The function that encapsulates everything we built so far and trains the neural network
+- `init_params` - Initializes random weights. 
+- `sigmoid` - A function for sigmoid activation.
+- `forward` - The forward functionality of the network.
+- `compute_loss` - Loss computation
+- `backward` - Backpropagation.
+- `update_params` - This updates the current weights to minimize loss.
+- `train` - The function that encapsulates everything we built so far and trains the neural network.
 
 XOR Results table -
 

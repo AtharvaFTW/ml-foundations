@@ -42,6 +42,8 @@ Implemented MSE, Binary Cross-Entropy, and Categorical Cross-Entropy in NumPy wi
 
 **Files:** `loss_function.py`
 
+---
+
 ## Day 4 - Value Class from Scratch (Andrej Karpathy)
 
 Implemented __add__, __mul__, backward() and tanh() from ground up.
@@ -54,6 +56,8 @@ Implemented __add__, __mul__, backward() and tanh() from ground up.
 - tanh saturates for large inputs - gradient approaches 0, which is why weight initialization matters
 
 **Files:** `micrograd.py`
+
+---
 
 ## Day 5 - Built 2-Layer neural network in pure NumPy.
 
@@ -85,6 +89,8 @@ Loss curve image -
 
 **Files:** `neural_net.py`
 
+---
+
 ## Day 6 - Optimizers from scratch.
 
 Implemented three optimizers and compared their convergence on XOR.
@@ -102,4 +108,6 @@ Loss curves show the tradeoff: SGD is most erratic, Momentum is smoother and Ada
 ![Optimizer convergence on XOR](images/optimizer_comparison.png)
 
 **Files:** `neural_net.py`
+
+---
  

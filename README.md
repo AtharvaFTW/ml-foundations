@@ -54,3 +54,33 @@ Implemented __add__, __mul__, backward() and tanh() from ground up.
 - tanh saturates for large inputs - gradient approaches 0, which is why weight initialization matters
 
 **Files:** `micrograd.py`
+
+## Day 5 - Built 2-Layer neural network in pure NumPy.
+
+Implemented init_params, sigmoid, forward, compute_loss, backward, update_params, training functions
+
+**Key Concepts**
+`init_params` - Initialized random weights 
+`sigmoid` - A function for sigmoid activation
+`forward` - The forward functionality of the network
+`compute_loss` - Computes the loss
+`backward` - Backpropagation
+`update_params` - This updates the current weights to minimize loss
+`train` - The function that encapsulates everything we built so far and trains the neural network
+
+XOR Results table -
+
+| Input | Target | Predicted |
+|-------|--------|-----------|
+| [0,0] | 0      | 0.0301    |
+| [0,1] | 1      | 0.9369    |
+| [1,0] | 1      | 0.9491    |
+| [1,1] | 0      | 0.0613    |
+
+**Key Insight:** A linear model cannot solve XOR. The hidden layer learns an intermediate representation that makes XOR linearly separable, that's why depth matters.
+
+Loss curve image - 
+
+![XOR Training Loss](images/XOR_Training_Loss.png)
+
+**Files:** `neural_net.py`

@@ -110,4 +110,25 @@ Loss curves show the tradeoff: SGD is most erratic, Momentum is smoother and Ada
 **Files:** `neural_net.py`
 
 ---
- 
+
+## Day 8 - Scaled Dot-Product Attention from Scratch
+
+Implementation of softmax and scaled dot-product from "Attention Is All You Need 2017"
+
+**Key Concepts**
+- Q, K, V - what actually they are?
+    - They come from the same input sequence, just projected through three different learned weight matrices (Wq, Wk, Wv). So if your input is X:
+
+        - Q = X·Wq
+        - K = X·Wk
+        - V = X·Wv
+    
+    The real question is - _why three separate projections?_ Here's the intuition:
+
+    Think of it like a search engine. **Q is your search query. K is the index of every document**. You compute QKᵀ to ask: _how relevant is each document to my query?_ That gives you attention scores. **Then V is the actual content** of each document. You use the scores to take a weighted sum of V - so you retrieve content proportional to relevance.
+
+- **Why √dₖ matters?** When dₖ is large, the dot products Q·K get very large in magnitude. Large values push softmax into regions where its gradient is nearly zero. The softmax saturates and learning stalls. Dividing by √dₖ keeps the values in a reasonable range before softmax.
+
+- **Positional Encoding** It adds a vector to each token's embedding to tell the model where that token sits in the sequence. Sine and cosine are used because they stay between -1 and 1 (avoiding large number bias) and different frequencies across dimensions ensure every position gets a unique pattern the model can distinguish.
+
+**Files:** `attention.py`

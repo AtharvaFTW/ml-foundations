@@ -57,8 +57,24 @@ class FeedForward(nn.Module):
         
 
 class EncoderBlock(nn.Module):
-    def __init__(self):
+    def __init__(self, d_model:int= 512, h:int = 8):
         super().__init__()
+
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+
+        self.MultiHead = MultiHeadAttention(d_model, h)
+        self.FF = FeedForward(d_model)
+
+    def forward(self, x):
+        x = x + self.MultiHead(x)
+        x = self.norm1(x)
+
+        x = x + self.FF(x)
+        x = self.norm2(x)
+
+        return x
+
 
 class Transformer(nn.Module):
     def __init__(self):

@@ -113,7 +113,7 @@ Loss curves show the tradeoff: SGD is most erratic, Momentum is smoother and Ada
 
 ## Day 8 - Scaled Dot-Product Attention from Scratch
 
-Implementation of softmax and scaled dot-product from "Attention Is All You Need 2017"
+Implementation of softmax and scaled dot-product from 'Attention Is All You Need 2017'
 
 **Key Concepts**
 - Q, K, V - what actually they are?
@@ -132,3 +132,41 @@ Implementation of softmax and scaled dot-product from "Attention Is All You Need
 - **Positional Encoding** It adds a vector to each token's embedding to tell the model where that token sits in the sequence. Sine and cosine are used because they stay between -1 and 1 (avoiding large number bias) and different frequencies across dimensions ensure every position gets a unique pattern the model can distinguish.
 
 **Files:** `attention.py`
+
+---
+
+## Day 9 - Transformer Encoder from Scratch
+
+Implemented the complete Encoder Module from 'Attention Is All You Need 2017' in Pytorch.
+
+**Key Concepts**
+
+- **Multi-Head Attention:** Instead of performing a single attention function with dimension keys dmodel, it is beneficial to linearly project the queries, keys and values h times with different, learned linear projections to dq, dk and dv. We perform the attention function parallel on each of these projected versions, yielding dv-dimensional output values. These are concatenated and again projected, resulting in the final values.
+
+- **Feed Forward:** In Transformer specifically two linear projections with a ReLU in between.
+    Input(d_model) -> Linear -> ReLU -> Linear -> Output(d_model)
+
+    where the d_model = 512 and dff = 2048
+
+- **Residual Connections:** 
+    - **Add:** After passing through a sub-layer (like MultiHead Attention) you add the original input back to the output `x = x + sublayer(x).` This ensures that even if the sub-layer learns nothing useful, the original information is never lost.
+
+    - **Norm:** Immediately after the Add, you normalize the values to keep them well-behaved and stable so training doesn't go haywire. 
+
+    Together: `output = LayerNorm(x + sublayer(x))`
+
+- **Encoder Block:** Brings together the MultiHead Attention, Feed Forward and the Residual Connections 
+
+**Key Insight:** The Encoder doesn't generate anything new, it just builds a richer, context-aware representation of the input. Each token's embedding gets updated to reflect not just _what_ it is, but _how it relates to every other token_ in the sequence
+
+Output shape verified:
+```python
+model = Transformer(vocab_size=1000)
+x = torch.randint(0, 1000, (2, 10))
+out = model(x)
+print(out.shape)  # torch.Size([2, 10, 512])
+```
+
+![Encoder](images/Encoder.png)
+
+**Files:** `transformer.py`

@@ -75,7 +75,45 @@ class EncoderBlock(nn.Module):
 
         return x
 
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model:int= 512, max_seq_len:int= 5000):
+        super().__init__()
+
+        z_matrix = torch.zeros(size =(max_seq_len, d_model))
+        pos = torch.arange(max_seq_len).unsqueeze(1)
+        i = torch.arange(d_model//2)
+        denominator = torch.pow(10000, (2*i)/d_model)
+
+        z_matrix[:,0::2] = torch.sin(pos/ denominator)
+        z_matrix[:,1::2] = torch.cos(pos/ denominator)
+        
+        self.register_buffer("pe", z_matrix)
+
+    def forward(self, x):
+
+        seq_len = x.shape[1]
+        x = x + self.pe[:seq_len, :]
+
+        return x
+
 
 class Transformer(nn.Module):
-    def __init__(self):
+    def __init__(self, vocab_size:int,max_seq_len:int= 5000, d_model:int= 512 ,h:int= 8):
         super().__init__()
+
+        self.embeddings = nn.Embedding(vocab_size, d_model)
+        self.pos_encoding = PositionalEncoding(d_model, max_seq_len)
+        self.encoder = EncoderBlock(d_model, h)
+
+    def forward(self, x):
+        x = self.embeddings(x)
+        x = self.pos_encoding(x)
+        x = self.encoder(x)
+
+        return x
+
+if __name__ == "__main__":
+    model = Transformer(vocab_size= 1000)
+    x = torch.randint(0,1000,(2,10))
+    out = model(x)
+    print(out.shape)

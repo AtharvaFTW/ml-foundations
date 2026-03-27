@@ -6,7 +6,7 @@ class MultiHeadAttention(nn.Module):
     """
     Implementation of MultiHeadAttention block from the Attention Is All You Need.
     """
-    def __init__(self,d_model: int = 512 , h: int = 8):
+    def __init__(self, d_model:int= 512, h:int= 8):
         super().__init__()
         
         self.W_Q = nn.Linear(d_model, d_model)
@@ -17,7 +17,7 @@ class MultiHeadAttention(nn.Module):
         self.h = h
         self.d_k = d_model//h
 
-    def forward(self,x):
+    def forward(self, x):
         batch, seq_len, d_model = x.shape
         Q = self.W_Q(x)
         K = self.W_K(x)
@@ -42,8 +42,19 @@ class MultiHeadAttention(nn.Module):
 
 
 class FeedForward(nn.Module):
-    def __init__(self):
+    def __init__(self, d_model:int= 512, d_ff:int = 2048):
         super().__init__()
+        self.feed = nn.Sequential(
+                        nn.Linear(d_model, d_ff),
+                        nn.ReLU(),
+                        nn.Linear(d_ff, d_model)
+                        )
+
+    def forward(self, x):
+        x = self.feed(x)
+    
+        return x
+        
 
 class EncoderBlock(nn.Module):
     def __init__(self):

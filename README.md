@@ -206,6 +206,6 @@ print("parameters:",sum(p.numel() for p in model.parameters() if p.requires_grad
 print("parameters:",sum(p.numel() for p in l_model.parameters() if p.requires_grad))  # parameters: 3148296  
 ```
 
-*Files:** `transformer.py`
+**Files:** `transformer.py`
 
 ---

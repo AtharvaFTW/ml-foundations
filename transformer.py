@@ -2,16 +2,38 @@ import torch
 from torch import nn
 import numpy as np
 
+
+class LoRA(nn.Module):
+    def __init__(self, linear:nn.Linear, r:int):
+        super().__init__()
+        
+        self.q_linear = linear 
+
+        for param in self.q_linear.parameters():
+            param.requires_grad = False
+        
+        in_f = linear.in_features
+        out_f = linear.out_features 
+
+        self.A = nn.Linear(in_f, r)
+        self.B = nn.Linear(r, out_f)
+
+    def forward(self, x):
+        x = self.q_linear(x) + self.B(self.A(x))
+        return x
+
 class MultiHeadAttention(nn.Module):
     """
     Implementation of MultiHeadAttention block from the Attention Is All You Need.
     """
-    def __init__(self, d_model:int= 512, h:int= 8):
+    def __init__(self, d_model:int= 512, h:int= 8, r:int= 4, use_LoRA:bool= True): 
+        # Toggle use_LoRA on and off.
         super().__init__()
         
-        self.W_Q = nn.Linear(d_model, d_model)
+        
+        self.W_Q = LoRA(nn.Linear(d_model, d_model),r) if use_LoRA else nn.Linear(d_model, d_model)
         self.W_K = nn.Linear(d_model, d_model)
-        self.W_V = nn.Linear(d_model, d_model)
+        self.W_V = LoRA(nn.Linear(d_model, d_model),r) if use_LoRA else nn.Linear(d_model, d_model)
         self.W_O = nn.Linear(d_model, d_model)
 
         self.h = h
@@ -112,8 +134,10 @@ class Transformer(nn.Module):
 
         return x
 
+
 if __name__ == "__main__":
     model = Transformer(vocab_size= 1000)
     x = torch.randint(0,1000,(2,10))
     out = model(x)
     print(out.shape)
+    print(sum(p.numel() for p in model.parameters() if p.requires_grad))

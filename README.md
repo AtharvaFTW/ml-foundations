@@ -139,6 +139,8 @@ Implementation of softmax and scaled dot-product from 'Attention Is All You Need
 
 Implemented the complete Encoder Module from 'Attention Is All You Need 2017' in Pytorch.
 
+![Encoder](images/Encoder.png)
+
 **Key Concepts**
 
 - **Multi-Head Attention:** Instead of performing a single attention function with dimension keys dmodel, it is beneficial to linearly project the queries, keys and values h times with different, learned linear projections to dq, dk and dv. We perform the attention function parallel on each of these projected versions, yielding dv-dimensional output values. These are concatenated and again projected, resulting in the final values.
@@ -166,8 +168,6 @@ x = torch.randint(0, 1000, (2, 10))
 out = model(x)
 print(out.shape)  # torch.Size([2, 10, 512])
 ```
-
-![Encoder](images/Encoder.png)
 
 **Files:** `transformer.py`
 

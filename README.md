@@ -170,3 +170,42 @@ print(out.shape)  # torch.Size([2, 10, 512])
 ![Encoder](images/Encoder.png)
 
 **Files:** `transformer.py`
+
+---
+
+## Day 11 - Implementation of LoRA in the Encoder
+
+Implemented the LoRA adapters in the Encoder from Day 9.
+
+**Key Concepts**
+
+- **LoRA:** Low Rank Adaptation for LLMs. LoRA aims to solve the problem of fine-tuning the whole model to make it task specific by training on the low intrinsic weights by freezing the the base ones.
+
+- LoRA adapters are wrapped around the currently existing linear layers.
+
+- The Q (query matrix) and the V (value matrix) are generally the ones we want to influence with LoRA.
+
+    - `self.W_Q = LoRA(nn.Linear(d_model, d_model),r)`
+
+**Key Insight :** 
+- Parameter count without LoRA : 3,664,384
+
+- Parameter count with LoRA wrapped on Q and V : 3,148,296
+
+- Reduction ~ 516,000 parameters - roughly 14% fewer trainable parameters.
+
+```python
+model = Transformer(vocab_size=1000)
+x = torch.randint(0, 1000, (2, 10))
+out = model(x)
+l_out = l_model (x)
+print(out.shape)  # torch.Size([2, 10, 512])
+print(l_out.shape)  # torch.Size([2, 10, 512])
+
+print("parameters:",sum(p.numel() for p in model.parameters() if p.requires_grad))    # parameters: 3664384
+print("parameters:",sum(p.numel() for p in l_model.parameters() if p.requires_grad))  # parameters: 3148296  
+```
+
+*Files:** `transformer.py`
+
+---

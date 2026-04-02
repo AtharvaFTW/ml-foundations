@@ -179,7 +179,7 @@ Implemented the LoRA adapters in the Encoder from Day 9.
 
 **Key Concepts**
 
-- **LoRA:** Low Rank Adaptation for LLMs. LoRA aims to solve the problem of fine-tuning the whole model to make it task specific by training on the low intrinsic weights by freezing the the base ones.
+- **LoRA:** Low Rank Adaptation of LLMs. LoRA aims to solve the problem of fine-tuning the whole model to make it task specific by training on the low intrinsic weights by freezing the the base ones.
 
 - LoRA adapters are wrapped around the currently existing linear layers.
 

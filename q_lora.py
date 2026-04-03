@@ -21,7 +21,7 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 
 peft_config = LoraConfig(
-    r = 32,
+    r = 8,
     lora_alpha = 16,
     lora_dropout = 0.05,
     bias = "none",
@@ -30,12 +30,13 @@ peft_config = LoraConfig(
 
 training_args = SFTConfig(
     learning_rate = 2.0e-4,
+    output_dir = "."
 )
 
 trainer = SFTTrainer(
     model = model,
     args = training_args,
-    train_dataset = DATASET,
+    train_dataset = DATASET["train"],
     peft_config = peft_config,
 )
 
